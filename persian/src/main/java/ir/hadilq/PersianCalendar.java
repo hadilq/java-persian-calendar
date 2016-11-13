@@ -1,0 +1,492 @@
+package ir.hadilq;
+
+import android.support.annotation.IntDef;
+import ir.hadilq.util.Calendars;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.util.Calendar;
+import java.util.Locale;
+import java.util.TimeZone;
+
+import static ir.hadilq.util.Calendars.getIntegerPart;
+
+public class PersianCalendar extends Calendar {
+
+    /**
+     * Value for the AH era.
+     */
+    public static final int AH = 1;
+
+    /**
+     * Value of the {@code MONTH} field indicating the first month of the
+     * year.
+     */
+    public static final int FARVARDIN = 0;
+
+    /**
+     * Value of the {@code MONTH} field indicating the second month of
+     * the year.
+     */
+    public static final int ORDIBEHESHT = 1;
+
+    /**
+     * Value of the {@code MONTH} field indicating the third month of the
+     * year.
+     */
+    public static final int KHORDAD = 2;
+
+    /**
+     * Value of the {@code MONTH} field indicating the fourth month of
+     * the year.
+     */
+    public static final int TIR = 3;
+
+    /**
+     * Value of the {@code MONTH} field indicating the fifth month of the
+     * year.
+     */
+    public static final int MORDAD = 4;
+
+    /**
+     * Value of the {@code MONTH} field indicating the sixth month of the
+     * year.
+     */
+    public static final int SHAHRIVAR = 5;
+
+    /**
+     * Value of the {@code MONTH} field indicating the seventh month of
+     * the year.
+     */
+    public static final int MEHR = 6;
+
+    /**
+     * Value of the {@code MONTH} field indicating the eighth month of
+     * the year.
+     */
+    public static final int ABAN = 7;
+
+    /**
+     * Value of the {@code MONTH} field indicating the ninth month of the
+     * year.
+     */
+    public static final int AZAR = 8;
+
+    /**
+     * Value of the {@code MONTH} field indicating the tenth month of the
+     * year.
+     */
+    public static final int DEY = 9;
+
+    /**
+     * Value of the {@code MONTH} field indicating the eleventh month of
+     * the year.
+     */
+    public static final int BAHMAN = 10;
+
+    /**
+     * Value of the {@code MONTH} field indicating the twelfth month of
+     * the year.
+     */
+    public static final int ESFAND = 11;
+
+    private final static int EPOCH_OFFSET = 492268;
+    private final static int BASE_YEAR = 1349;
+    private final static int[] FIXED_DATES = new int[]{
+            492347, // False   ,  1349
+            492712, // True   ,  1350
+            493078, // False   ,  1351
+            493443, // False   ,  1352
+            493808, // False   ,  1353
+            494173, // True   ,  1354
+            494539, // False   ,  1355
+            494904, // False   ,  1356
+            495269, // False   ,  1357
+            495634, // True   ,  1358
+            496000, // False   ,  1359
+            496365, // False   ,  1360
+            496730, // False   ,  1361
+            497095, // True   ,  1362
+            497461, // False   ,  1363
+            497826, // False   ,  1364
+            498191, // False   ,  1365
+            498556, // True   ,  1366
+            498922, // False   ,  1367
+            499287, // False   ,  1368
+            499652, // False   ,  1369
+            500017, // True   ,  1370
+            500383, // False   ,  1371
+            500748, // False   ,  1372
+            501113, // False   ,  1373
+            501478, // False   ,  1374
+            501843, // True   ,  1375
+            502209, // False   ,  1376
+            502574, // False   ,  1377
+            502939, // False   ,  1378
+            503304, // True   ,  1379
+            503670, // False   ,  1380
+            504035, // False   ,  1381
+            504400, // False   ,  1382
+            504765, // True   ,  1383
+            505131, // False   ,  1384
+            505496, // False   ,  1385
+            505861, // False   ,  1386
+            506226, // True   ,  1387
+            506592, // False   ,  1388
+            506957, // False   ,  1389
+            507322, // False   ,  1390
+            507687, // True   ,  1391
+            508053, // False   ,  1392
+            508418, // False   ,  1393
+            508783, // False   ,  1394
+            509148, // True   ,  1395
+            509514, // False   ,  1396
+            509879, // False   ,  1397
+            510244, // False   ,  1398
+            510609, // True   ,  1399
+            510975, // False   ,  1400
+            511340, // False   ,  1401
+            511705, // False   ,  1402
+            512070, // False   ,  1403
+            512435, // True   ,  1404
+            512801, // False   ,  1405
+            513166, // False   ,  1406
+            513531, // False   ,  1407
+            513896, // True   ,  1408
+            514262, // False   ,  1409
+            514627, // False   ,  1410
+            514992, // False   ,  1411
+            515357, // True   ,  1412
+            515723, // False   ,  1413
+            516088, // False   ,  1414
+            516453, // False   ,  1415
+            516818, // True   ,  1416
+            517184, // False   ,  1417
+    };
+    private final static int[] ACCUMULATED_DAYS_IN_MONTH = new int[]{0, 31, 62, 93, 124, 155,
+            186, 216, 246, 276, 306, 336};
+    private final static int[] MINIMUMS = new int[]{0, 1, 0, 1, 0, 1, 1, 1, 1, 0,
+            0, 0, 0, 0, 0, -13 * 3600 * 1000, 0};
+
+    private static int[] MAXIMUMS = new int[]{1, 292278994, 11, 53, 6, 31,
+            366, 7, 6, 1, 11, 23, 59, 59, 999, 14 * 3600 * 1000, 7200000};
+
+    private static int[] LEAST_MAXIMUMS = new int[]{1, 292269054, 11, 50, 3,
+            28, 355, 7, 3, 1, 11, 23, 59, 59, 999, 50400000, 1200000};
+
+    private final static long ONE_SECOND_IN_MILLIS = 1000,
+            ONE_MINUTE_IN_MILLIS = 60 * ONE_SECOND_IN_MILLIS,
+            ONE_HOUR_IN_MILLIS = 60 * ONE_MINUTE_IN_MILLIS,
+            ONE_DAY_IN_MILLIS = 24 * ONE_HOUR_IN_MILLIS;
+    private int fixedDate = EPOCH_OFFSET;
+
+
+    @IntDef(value = {Calendar.ERA, Calendar.YEAR, Calendar.MONTH, Calendar.WEEK_OF_YEAR, Calendar.WEEK_OF_MONTH, Calendar.DATE, Calendar.DAY_OF_MONTH, Calendar.DAY_OF_YEAR, Calendar.DAY_OF_WEEK, Calendar.DAY_OF_WEEK_IN_MONTH, Calendar.AM_PM, Calendar.HOUR, Calendar.HOUR_OF_DAY, Calendar.MINUTE, Calendar.SECOND, Calendar.MILLISECOND, Calendar.ZONE_OFFSET, Calendar.DST_OFFSET})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface Fields {
+    }
+
+    /**
+     * Constructs a new {@code PersianCalendar} initialized to the current date and
+     * time with the default {@code Locale} and {@code TimeZone}.
+     */
+    public PersianCalendar() {
+        this(TimeZone.getDefault(), Locale.getDefault());
+    }
+
+    /**
+     * Constructs a new {@code PersianCalendar} initialized to midnight in the default
+     * {@code TimeZone} and {@code Locale} on the specified date.
+     *
+     * @param year  the year.
+     * @param month the month.
+     * @param day   the day of the month.
+     */
+    public PersianCalendar(int year, int month, int day) {
+        super(TimeZone.getDefault(), Locale.getDefault());
+        set(year, month, day);
+    }
+
+    /**
+     * Constructs a new {@code PersianCalendar} initialized to the specified date and
+     * time in the default {@code TimeZone} and {@code Locale}.
+     *
+     * @param year   the year.
+     * @param month  the month.
+     * @param day    the day of the month.
+     * @param hour   the hour.
+     * @param minute the minute.
+     */
+    public PersianCalendar(int year, int month, int day, int hour, int minute) {
+        super(TimeZone.getDefault(), Locale.getDefault());
+        set(year, month, day, hour, minute);
+    }
+
+    /**
+     * Constructs a new {@code PersianCalendar} initialized to the specified date and
+     * time in the default {@code TimeZone} and {@code Locale}.
+     *
+     * @param year   the year.
+     * @param month  the month.
+     * @param day    the day of the month.
+     * @param hour   the hour.
+     * @param minute the minute.
+     * @param second the second.
+     */
+    public PersianCalendar(int year, int month, int day, int hour,
+                           int minute, int second) {
+        super(TimeZone.getDefault(), Locale.getDefault());
+        set(year, month, day, hour, minute, second);
+    }
+
+    /**
+     * Constructs a new {@code PersianCalendar} initialized to the current date and
+     * time and using the specified {@code Locale} and the default {@code TimeZone}.
+     *
+     * @param locale the {@code Locale}.
+     */
+    public PersianCalendar(Locale locale) {
+        this(TimeZone.getDefault(), locale);
+    }
+
+    /**
+     * Constructs a new {@code PersianCalendar} initialized to the current date and
+     * time and using the specified {@code TimeZone} and the default {@code Locale}.
+     *
+     * @param timezone the {@code TimeZone}.
+     */
+    public PersianCalendar(TimeZone timezone) {
+        this(timezone, Locale.getDefault());
+    }
+
+    /**
+     * Constructs a new {@code PersianCalendar} initialized to the current date and
+     * time and using the specified {@code TimeZone} and {@code Locale}.
+     *
+     * @param timezone the {@code TimeZone}.
+     * @param locale   the {@code Locale}.
+     */
+    public PersianCalendar(TimeZone timezone, Locale locale) {
+        super(timezone, locale);
+        setTimeInMillis(System.currentTimeMillis());
+    }
+
+    @Override
+    public void add(@Fields int field, int value) {
+        throw new IllegalArgumentException("Not supported");
+    }
+
+    @Override
+    protected void computeFields() {
+        long timeInZone = time + getOffset(time);
+        fixedDate = ((int) Math.floor(timeInZone * 1d / ONE_DAY_IN_MILLIS)) + EPOCH_OFFSET;
+        fields[YEAR] = getYearFromFixedDate(fixedDate);
+        if (!isSet(ERA)) {
+            set(ERA, AH);
+        }
+        int far1 = getFixedDateFar1(fields[YEAR], fields[ERA] == AH);
+        int daysOfYear = fixedDate - far1 + 1;
+        if (daysOfYear < ACCUMULATED_DAYS_IN_MONTH[6]) {
+            fields[MONTH] = (int) Math.floor((daysOfYear - 1) / 31d); // month range is 0-11
+        } else {
+            fields[MONTH] = (int) Math.floor((daysOfYear - 1 - ACCUMULATED_DAYS_IN_MONTH[6]) / 30d) + 6;
+        }
+        fields[DAY_OF_MONTH] = daysOfYear - ACCUMULATED_DAYS_IN_MONTH[fields[MONTH]];
+
+        long extra = timeInZone - ((fixedDate - EPOCH_OFFSET) * ONE_DAY_IN_MILLIS);
+        fields[HOUR_OF_DAY] = (int) Math.floor(extra * 1d / ONE_HOUR_IN_MILLIS);
+        if (fields[HOUR_OF_DAY] >= 12) {
+            fields[HOUR] = fields[HOUR_OF_DAY] - 12;
+            fields[AM_PM] = PM;
+        } else {
+            fields[HOUR] = fields[HOUR_OF_DAY] - 12;
+            fields[AM_PM] = AM;
+        }
+
+        extra -= fields[HOUR_OF_DAY] * ONE_HOUR_IN_MILLIS;
+        fields[MINUTE] = (int) Math.floor(extra * 1d / ONE_MINUTE_IN_MILLIS);
+        extra -= fields[MINUTE] * ONE_MINUTE_IN_MILLIS;
+        fields[SECOND] = (int) Math.floor(extra * 1d / ONE_SECOND_IN_MILLIS);
+        extra -= fields[SECOND] * ONE_SECOND_IN_MILLIS;
+        fields[MILLISECOND] = (int) extra;
+    }
+
+    @Override
+    protected void computeTime() {
+        // Time is the reference and
+        if (!isSet(YEAR) || !isSet(MONTH)) {
+            return;
+        }
+        if (fields[YEAR] == 0) {
+            throw new IllegalArgumentException("Year cannot be zero");
+        }
+        fields[YEAR] += Math.floor(fields[MONTH] / 12);
+        fields[MONTH] %= 12; // months of a year is a fixed number (12)
+        if (fields[MONTH] < 0) {
+            fields[MONTH] += 12; // month range is 0-11
+        }
+        if (!isSet(ERA)) {
+            set(ERA, AH);
+        }
+        int fixedDate = getFixedDateFar1(fields[YEAR], fields[ERA] == AH) +
+                ACCUMULATED_DAYS_IN_MONTH[fields[MONTH]] +
+                (isSet(DAY_OF_MONTH) ? fields[DAY_OF_MONTH] - 1 : 0);
+
+        //console.log("year: "+Year);
+        //console.log("fixedDate: "+fixedDate);
+        int timezoneOffset = -getOffset(fixedDate * ONE_DAY_IN_MILLIS);
+        time = (fixedDate - EPOCH_OFFSET) * ONE_DAY_IN_MILLIS + ONE_HOUR_IN_MILLIS +
+                (isSet(HOUR_OF_DAY) ? fields[HOUR_OF_DAY] : (isSet(HOUR) && isSet(AM_PM) ? (fields[HOUR] + (fields[AM_PM] == AM ? 0 : 12)) : 0)) * ONE_HOUR_IN_MILLIS +
+                (isSet(MINUTE) ? fields[MINUTE] : 0) * ONE_MINUTE_IN_MILLIS + timezoneOffset +
+                (isSet(SECOND) ? fields[SECOND] : 0) * ONE_SECOND_IN_MILLIS +
+                (isSet(MILLISECOND) ? fields[MILLISECOND] : 0);
+    }
+
+    @Override
+    public int getActualMinimum(int field) {
+        return getMinimum(field);
+    }
+
+    /**
+     * Returns the maximum value of the given field for the current date.
+     * For example, the maximum number of days in the current month.
+     */
+    @Override
+    public int getActualMaximum(int field) {
+        return getMaximum(field);
+    }
+
+    /**
+     * Returns the minimum value of the given field for the current date.
+     */
+    @Override
+    public int getGreatestMinimum(@Fields int field) {
+        return MINIMUMS[field];
+    }
+
+    @Override
+    public int getLeastMaximum(@Fields int field) {
+        return LEAST_MAXIMUMS[field];
+    }
+
+    @Override
+    public int getMaximum(@Fields int field) {
+        return MAXIMUMS[field];
+    }
+
+    @Override
+    public int getMinimum(@Fields int field) {
+        return MINIMUMS[field];
+    }
+
+    @Override
+    public void roll(@Fields int field, boolean increment) {
+        throw new IllegalArgumentException("Not supported");
+    }
+
+    private int getOffset(long localTime) {
+        return getTimeZone().getOffset(localTime);
+    }
+
+    /* To find the year that associated with fixedDat. */
+    private int getYearFromFixedDate(int fd) {
+        int testYear;
+        if (fd > 0)
+            testYear = (int) Math.floor(Math.round((fd - 1) / 365.24219)) + 1;
+        else
+            testYear = (int) Math.floor(Math.round(fd / 365.24219));
+        //console.log("testYear: "+testYear);
+        int far1 = getFixedDateFar1(testYear, fd > 0);
+        //console.log("far1: "+far1);
+        if (far1 <= fd)
+            return testYear;
+        else
+            return testYear - 1;
+    }
+
+    /* To find the fixedDate of first day of year. Farvardin 1, 1 must have fixedDate of one. */
+    public static int getFixedDateFar1(int year, boolean afterH) {
+        if (year <= 0) {
+            throw new IllegalArgumentException("Year cannot be negative or zero. Year: " + year);
+        }
+        if (year >= BASE_YEAR && year < BASE_YEAR + FIXED_DATES.length - 1) {
+            return FIXED_DATES[year - BASE_YEAR];
+        }
+        // The detail can be found in en.wikibook.com
+        int realYear;
+        if (afterH)
+            realYear = year - 1;
+        else
+            realYear = -year;
+
+        int days = 1029983 * ((int) Math.floor((realYear + 38) / 2820d));
+        int cycle = (realYear + 38) % 2820;
+        if (cycle < 0) cycle += 2820;
+        days += Math.floor((cycle - 38) * 365.24219) + 1;
+//        if (cycle - 38 < 0) days--;
+
+        double extra = cycle * 0.24219;
+        int frac = getIntegerPart((extra - Math.floor(extra)) * 1000);
+        if (isLeapYear(year > 1 ? year - 1 : year == 1 ? 1 : year + 1, afterH) && frac <= 202) {
+            days++;
+        }
+        return days;
+    }
+
+    private int daysInMonth() {
+        return daysInMonth(isLeapYear(fields[YEAR], fields[ERA] == AH), fields[MONTH]);
+    }
+
+    private int daysInMonth(boolean leapYear, int month) {
+        if (month == ESFAND) {
+            if (leapYear) {
+                return 30;
+            } else {
+                return 29;
+            }
+        }
+
+        return ACCUMULATED_DAYS_IN_MONTH[month + 1] - ACCUMULATED_DAYS_IN_MONTH[month];
+    }
+
+    private int daysInYear(int year, boolean afterH) {
+        return isLeapYear(year, afterH) ? 366 : 365;
+    }
+
+    /**
+     * Returns true if {@code year} is a leap year.
+     */
+    public boolean isLeapYear() {
+        if (isSet(YEAR)) {
+            return isLeapYear(fields[YEAR], fields[ERA] == AH);
+        }
+        throw new IllegalArgumentException("Year must be set");
+    }
+
+    /**
+     * Returns true if {@code year} is a leap year.
+     */
+    public static boolean isLeapYear(int year, boolean afterH) {
+        // The detail can be found in en.wikibook.com
+        double realYear0, realYear1;
+        if (afterH) {
+            realYear0 = Calendars.realYear(year, true);
+            realYear1 = Calendars.realYear(year + 1, true);
+        } else {
+            realYear0 = Calendars.realYear(year, false);
+            realYear1 = Calendars.realYear(year - 1, false);
+        }
+
+        double extraDaysOfOneYear = 0.24219d; // 0.24219 ~ extra days of one year
+        double delta = 0.025;
+        double leapDays0 = realYear0 * extraDaysOfOneYear + delta;
+        double leapDays1 = realYear1 * extraDaysOfOneYear + delta;
+        double frac0 = getIntegerPart((leapDays0 - getIntegerPart(leapDays0)) * 1000);
+        double frac1 = getIntegerPart((leapDays1 - getIntegerPart(leapDays1)) * 1000);
+        int criticalPoint = 266;
+        if (frac0 <= criticalPoint && frac1 > criticalPoint)
+            return true;
+        else
+            return false;
+    }
+}
