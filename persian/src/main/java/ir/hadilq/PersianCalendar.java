@@ -1,7 +1,7 @@
 package ir.hadilq;
 
 import android.support.annotation.IntDef;
-import ir.hadilq.util.Calendars;
+import ir.hadilq.util.CalendarsUtil;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -9,7 +9,7 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import static ir.hadilq.util.Calendars.getIntegerPart;
+import static ir.hadilq.util.CalendarsUtil.getIntegerPart;
 
 public class PersianCalendar extends Calendar {
 
@@ -409,7 +409,7 @@ public class PersianCalendar extends Calendar {
         if (year <= 0) {
             throw new IllegalArgumentException("Year cannot be negative or zero. Year: " + year);
         }
-        if (year >= BASE_YEAR && year < BASE_YEAR + FIXED_DATES.length - 1) {
+        if (afterH && year >= BASE_YEAR && year < BASE_YEAR + FIXED_DATES.length - 1) {
             return FIXED_DATES[year - BASE_YEAR];
         }
         // The detail can be found in en.wikibook.com
@@ -422,12 +422,21 @@ public class PersianCalendar extends Calendar {
         int days = 1029983 * ((int) Math.floor((realYear + 38) / 2820d));
         int cycle = (realYear + 38) % 2820;
         if (cycle < 0) cycle += 2820;
+
         days += Math.floor((cycle - 38) * 365.24219) + 1;
-//        if (cycle - 38 < 0) days--;
 
         double extra = cycle * 0.24219;
         int frac = getIntegerPart((extra - Math.floor(extra)) * 1000);
-        if (isLeapYear(year > 1 ? year - 1 : year == 1 ? 1 : year + 1, afterH) && frac <= 202) {
+
+        int lastYear = year - 1;
+        boolean lastYearAfterH = afterH;
+        if (afterH && year == 1) {
+            lastYear = 1;
+            lastYearAfterH = false;
+        } else if(!afterH) {
+            lastYear = year + 1;
+        }
+        if (isLeapYear(lastYear, lastYearAfterH) && frac <= 202) {
             days++;
         }
         return days;
@@ -470,11 +479,11 @@ public class PersianCalendar extends Calendar {
         // The detail can be found in en.wikibook.com
         double realYear0, realYear1;
         if (afterH) {
-            realYear0 = Calendars.realYear(year, true);
-            realYear1 = Calendars.realYear(year + 1, true);
+            realYear0 = CalendarsUtil.realYear(year, true);
+            realYear1 = CalendarsUtil.realYear(year + 1, true);
         } else {
-            realYear0 = Calendars.realYear(year, false);
-            realYear1 = Calendars.realYear(year - 1, false);
+            realYear0 = CalendarsUtil.realYear(year, false);
+            realYear1 = CalendarsUtil.realYear(year - 1, false);
         }
 
         double extraDaysOfOneYear = 0.24219d; // 0.24219 ~ extra days of one year

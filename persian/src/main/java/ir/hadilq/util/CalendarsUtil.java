@@ -1,6 +1,6 @@
 package ir.hadilq.util;
 
-public class Calendars {
+public class CalendarsUtil {
 
     public static int realYear(int year, boolean afterH) {
         if (afterH) {

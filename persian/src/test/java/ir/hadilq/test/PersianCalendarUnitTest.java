@@ -77,15 +77,15 @@ public class PersianCalendarUnitTest {
             }
         }
 
-//        days = 0;
-//        for (int i = 1; i < 3000; i++) {
-//            if (Cycle.isLeap(bigCycle, i, false)) {
-//                days -= 366;
-//            } else {
-//                days -= 365;
-//            }
-//            checkFixedDateFromFar1(i, false, days);
-//        }
+        days = 1;
+        for (int i = 1; i < 3000; i++) {
+            if (Cycle.isLeap(bigCycle, i, false)) {
+                days -= 366;
+            } else {
+                days -= 365;
+            }
+            checkFixedDateFromFar1(i, false, days);
+        }
     }
 
     private void checkFixedDateFromFar1(int year, boolean afterH, int days) throws Exception {

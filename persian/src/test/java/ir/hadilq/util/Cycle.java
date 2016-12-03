@@ -83,7 +83,7 @@ public class Cycle {
 
     public static boolean isLeap(Cycle cycle, int year, boolean afterH) {
         Assert.assertTrue("Year cannot be negative. Year: " + year, year > 0);
-        return cycle.isLeap(Calendars.realYear(year, afterH));
+        return cycle.isLeap(CalendarsUtil.realYear(year, afterH));
     }
 
     private int interval() {
