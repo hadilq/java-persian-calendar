@@ -174,6 +174,42 @@ public class PersianCalendarUnitTest {
         }
         Assert.assertTrue("Year: " + calendar.get(Calendar.YEAR), calendar.get(Calendar.YEAR) == 1);
         Assert.assertTrue("Era: " + calendar.get(Calendar.ERA), calendar.get(Calendar.ERA) == PersianCalendar.AH);
+
+        for (int i = 2; i < 3000; i++) {
+            calendar = new PersianCalendar(i, 0, 1);
+            calendar.add(Calendar.DATE, -1);
+
+            Assert.assertTrue("Year: " + calendar.get(Calendar.YEAR), calendar.get(Calendar.YEAR) == i - 1);
+            Assert.assertTrue("Month: " + calendar.get(Calendar.MONTH), calendar.get(Calendar.MONTH) == 11);
+            if (PersianCalendar.isLeapYear(i - 1, true)) {
+                Assert.assertTrue("Day: " + calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.DAY_OF_MONTH) == 30);
+            } else {
+                Assert.assertTrue("Day: " + calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.DAY_OF_MONTH) == 29);
+            }
+        }
+
+        for (int i = 1; i < 3000; i++) {
+            calendar = new PersianCalendar(i, 0, 1);
+            calendar.set(Calendar.ERA, PersianCalendar.BH);
+            calendar.add(Calendar.DATE, -1);
+
+            Assert.assertTrue("Year: " + calendar.get(Calendar.YEAR), calendar.get(Calendar.YEAR) == i + 1);
+            Assert.assertTrue("Month: " + calendar.get(Calendar.MONTH), calendar.get(Calendar.MONTH) == 11);
+            if (PersianCalendar.isLeapYear(i + 1, false)) {
+                Assert.assertTrue("Day: " + calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.DAY_OF_MONTH) == 30);
+            } else {
+                Assert.assertTrue("Day: " + calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.DAY_OF_MONTH) == 29);
+            }
+        }
+
+        calendar = new PersianCalendar(1, 0, 1);
+        calendar.add(Calendar.DATE, -1);
+
+        Assert.assertTrue("Era: " + calendar.get(Calendar.ERA), calendar.get(Calendar.ERA) == PersianCalendar.BH);
+        Assert.assertTrue("Year: " + calendar.get(Calendar.YEAR), calendar.get(Calendar.YEAR) == 1);
+        Assert.assertTrue("Month: " + calendar.get(Calendar.MONTH), calendar.get(Calendar.MONTH) == 11);
+        // year 1 before Hijra is a leap year
+        Assert.assertTrue("Day: " + calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.DAY_OF_MONTH) == 30);
     }
 
     @Test
