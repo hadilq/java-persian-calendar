@@ -398,13 +398,13 @@ public class PersianCalendar extends Calendar {
             fields[ERA] = AH;
         }
         int far1 = getFixedDateFar1(fields[YEAR], fields[ERA] == AH);
-        int daysOfYear = fixedDate - far1 + 1;
-        if (daysOfYear < ACCUMULATED_DAYS_IN_MONTH[6]) {
-            fields[MONTH] = (int) Math.floor((daysOfYear - 1) / 31d); // month range is 0-11
+        fields[DAY_OF_YEAR] = fixedDate - far1 + 1;
+        if (fields[DAY_OF_YEAR] < ACCUMULATED_DAYS_IN_MONTH[6]) {
+            fields[MONTH] = (int) Math.floor((fields[DAY_OF_YEAR] - 1) / 31d); // month range is 0-11
         } else {
-            fields[MONTH] = (int) Math.floor((daysOfYear - 1 - ACCUMULATED_DAYS_IN_MONTH[6]) / 30d) + 6;
+            fields[MONTH] = (int) Math.floor((fields[DAY_OF_YEAR] - 1 - ACCUMULATED_DAYS_IN_MONTH[6]) / 30d) + 6;
         }
-        fields[DAY_OF_MONTH] = daysOfYear - ACCUMULATED_DAYS_IN_MONTH[fields[MONTH]];
+        fields[DAY_OF_MONTH] = fields[DAY_OF_YEAR] - ACCUMULATED_DAYS_IN_MONTH[fields[MONTH]];
 
         long extra = timeInZone - ((fixedDate - EPOCH_OFFSET) * ONE_DAY_IN_MILLIS);
         fields[HOUR_OF_DAY] = (int) Math.floor(extra * 1d / ONE_HOUR_IN_MILLIS);
