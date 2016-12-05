@@ -134,4 +134,94 @@ public class PersianCalendarUnitTest {
                         ", diff is: " + (timeInMillis - expected),
                 timeInMillis == expected);
     }
+
+    @Test
+    public void persianCalendarAddMethodForYear() throws Exception {
+        PersianCalendar calendar;
+
+        for (int i = 1; i < 3000; i++) {
+            if (PersianCalendar.isLeapYear(i, true)) {
+                calendar = new PersianCalendar(i, 11, 30);
+                calendar.add(Calendar.DATE, 1);
+            } else {
+                calendar = new PersianCalendar(i, 11, 29);
+                calendar.add(Calendar.DATE, 1);
+            }
+            Assert.assertTrue("Year: " + calendar.get(Calendar.YEAR), calendar.get(Calendar.YEAR) == i + 1);
+        }
+
+        for (int i = 2; i < 3000; i++) {
+            if (PersianCalendar.isLeapYear(i, false)) {
+                calendar = new PersianCalendar(i, 11, 30);
+                calendar.set(Calendar.ERA, PersianCalendar.BH);
+                calendar.add(Calendar.DATE, 1);
+            } else {
+                calendar = new PersianCalendar(i, 11, 29);
+                calendar.set(Calendar.ERA, PersianCalendar.BH);
+                calendar.add(Calendar.DATE, 1);
+            }
+            Assert.assertTrue("Year: " + calendar.get(Calendar.YEAR), calendar.get(Calendar.YEAR) == i - 1);
+        }
+
+        if (PersianCalendar.isLeapYear(1, false)) {
+            calendar = new PersianCalendar(1, 11, 30);
+            calendar.set(Calendar.ERA, PersianCalendar.BH);
+            calendar.add(Calendar.DATE, 1);
+        } else {
+            calendar = new PersianCalendar(1, 11, 29);
+            calendar.set(Calendar.ERA, PersianCalendar.BH);
+            calendar.add(Calendar.DATE, 1);
+        }
+        Assert.assertTrue("Year: " + calendar.get(Calendar.YEAR), calendar.get(Calendar.YEAR) == 1);
+        Assert.assertTrue("Era: " + calendar.get(Calendar.ERA), calendar.get(Calendar.ERA) == PersianCalendar.AH);
+    }
+
+    @Test
+    public void persianCalendarAddMethodForMonth() throws Exception {
+        PersianCalendar calendar;
+        PersianCalendar expectedCalendar;
+
+        for (int y = -3000; y <= 3000; y++) {
+            if (y == 0) {
+                continue;
+            }
+            boolean isLeap = PersianCalendar.isLeapYear(Math.abs(y), y > 0);
+            for (int m = 0; m < 12; m++) {
+//                System.out.println("Year: " + y + ", Month: " + m);
+                calendar = new PersianCalendar(Math.abs(y), m, PersianCalendar.daysInMonth(isLeap, m));
+                calendar.set(Calendar.ERA, y > 0 ? PersianCalendar.AH : PersianCalendar.BH);
+                calendar.add(Calendar.DATE, 1);
+                expectedCalendar = new PersianCalendar(Math.abs(y), m + 1, 1);
+                expectedCalendar.set(Calendar.ERA, y > 0 ? PersianCalendar.AH : PersianCalendar.BH);
+                // To compute
+                expectedCalendar.get(Calendar.YEAR);
+                Assert.assertTrue("\n         Calendar: " + calendar + "\nExpected calendar: " + expectedCalendar, calendar.get(Calendar.YEAR) == expectedCalendar.get(Calendar.YEAR));
+                Assert.assertTrue("\n         Calendar: " + calendar + "\nExpected calendar: " + expectedCalendar, calendar.get(Calendar.MONTH) == expectedCalendar.get(Calendar.MONTH));
+                Assert.assertTrue("\n         Calendar: " + calendar + "\nExpected calendar: " + expectedCalendar, calendar.get(Calendar.DAY_OF_MONTH) == expectedCalendar.get(Calendar.DAY_OF_MONTH));
+            }
+        }
+
+        for (int y = -3000; y <= 3000; y++) {
+            if (y == 0) {
+                continue;
+            }
+            for (int m = 0; m < 12; m++) {
+//                System.out.println("Year: " + y + ", Month: " + m);
+                calendar = new PersianCalendar(Math.abs(y), m, 1);
+                calendar.set(Calendar.ERA, y > 0 ? PersianCalendar.AH : PersianCalendar.BH);
+                calendar.add(Calendar.DATE, -1);
+                expectedCalendar = new PersianCalendar(Math.abs(y), m - 1, 2);
+                expectedCalendar.set(Calendar.ERA, y > 0 ? PersianCalendar.AH : PersianCalendar.BH);
+                // To find the end of month, redefine it
+                int year = expectedCalendar.get(Calendar.YEAR);
+                int month = expectedCalendar.get(Calendar.MONTH);
+                int era = expectedCalendar.get(Calendar.ERA);
+                expectedCalendar = new PersianCalendar(year, month, PersianCalendar.daysInMonth(PersianCalendar.isLeapYear(year, era == PersianCalendar.AH), month));
+                expectedCalendar.set(Calendar.ERA, era);
+                Assert.assertTrue("\n         Calendar: " + calendar + "\nExpected calendar: " + expectedCalendar, calendar.get(Calendar.YEAR) == expectedCalendar.get(Calendar.YEAR));
+                Assert.assertTrue("\n         Calendar: " + calendar + "\nExpected calendar: " + expectedCalendar, calendar.get(Calendar.MONTH) == expectedCalendar.get(Calendar.MONTH));
+                Assert.assertTrue("\n         Calendar: " + calendar + "\nExpected calendar: " + expectedCalendar, calendar.get(Calendar.DAY_OF_MONTH) == expectedCalendar.get(Calendar.DAY_OF_MONTH));
+            }
+        }
+    }
 }

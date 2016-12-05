@@ -14,9 +14,14 @@ import static ir.hadilq.util.CalendarsUtil.getIntegerPart;
 public class PersianCalendar extends Calendar {
 
     /**
-     * Value for the AH era.
+     * Value for the after hejra era.
      */
     public static final int AH = 1;
+
+    /**
+     * Value for the before hejra era.
+     */
+    public static final int BH = 0;
 
     /**
      * Value of the {@code MONTH} field indicating the first month of the
@@ -273,7 +278,112 @@ public class PersianCalendar extends Calendar {
 
     @Override
     public void add(@Fields int field, int value) {
-        throw new IllegalArgumentException("Not supported");
+        if (value == 0) {
+            return;
+        }
+        if (field < 0 || field >= ZONE_OFFSET) {
+            throw new IllegalArgumentException();
+        }
+
+        if (field == ERA) {
+            complete();
+            if (fields[ERA] == AH) {
+                if (value >= 0) {
+                    return;
+                }
+                set(ERA, BH);
+            } else {
+                if (value <= 0) {
+                    return;
+                }
+                set(ERA, AH);
+            }
+            complete();
+            return;
+        }
+
+        if (field == YEAR || field == MONTH) {
+            complete();
+            if (field == MONTH) {
+                int month = fields[MONTH] + value;
+                if (month < 0) {
+                    value = (month - 11) / 12;
+                    month = 12 + (month % 12);
+                } else {
+                    value = month / 12;
+                }
+                set(MONTH, month % 12);
+            }
+            set(YEAR, fields[YEAR] + value);
+            int days = daysInMonth(isLeapYear(fields[YEAR], fields[ERA] == AH), fields[MONTH]);
+            if (fields[DATE] > days) {
+                set(DATE, days);
+            }
+            complete();
+            return;
+        }
+
+        long multiplier = 0;
+        getTimeInMillis(); // Update the time
+        switch (field) {
+            case MILLISECOND:
+                time += value;
+                break;
+            case SECOND:
+                time += value * 1000L;
+                break;
+            case MINUTE:
+                time += value * 60000L;
+                break;
+            case HOUR:
+            case HOUR_OF_DAY:
+                time += value * 3600000L;
+                break;
+            case AM_PM:
+                multiplier = 43200000L;
+                break;
+            case DATE:
+            case DAY_OF_YEAR:
+            case DAY_OF_WEEK:
+                multiplier = 86400000L;
+                break;
+            case WEEK_OF_YEAR:
+            case WEEK_OF_MONTH:
+            case DAY_OF_WEEK_IN_MONTH:
+                multiplier = 604800000L;
+                break;
+        }
+
+        if (multiplier == 0) {
+            areFieldsSet = false;
+            complete();
+            return;
+        }
+
+        long delta = value * multiplier;
+
+        /*
+         * Attempt to keep the hour and minute constant when we've crossed a DST
+         * boundary and the user's units are AM_PM or larger. The typical
+         * consequence is that calls to add(DATE, 1) will add 23, 24 or 25 hours
+         * depending on whether the DST goes forward, constant, or backward.
+         *
+         * We know we've crossed a DST boundary if the new time will have a
+         * different timezone offset. Adjust by adding the difference of the two
+         * offsets. We don't adjust when doing so prevents the change from
+         * crossing the boundary.
+         */
+        int zoneOffset = getTimeZone().getRawOffset();
+        int offsetBefore = getOffset(time + zoneOffset);
+        int offsetAfter = getOffset(time + zoneOffset + delta);
+        int dstDelta = offsetBefore - offsetAfter;
+        if (getOffset(time + zoneOffset + delta + dstDelta) == offsetAfter) {
+            delta += dstDelta;
+        }
+
+        time += delta;
+        areFieldsSet = false;
+        complete();
     }
 
     @Override
@@ -281,8 +391,11 @@ public class PersianCalendar extends Calendar {
         long timeInZone = time + getOffset(time);
         fixedDate = ((int) Math.floor(timeInZone * 1d / ONE_DAY_IN_MILLIS)) + EPOCH_OFFSET;
         fields[YEAR] = getYearFromFixedDate(fixedDate);
-        if (!isSet(ERA)) {
-            set(ERA, AH);
+        if (fields[YEAR] <= 0) {
+            fields[YEAR] = -fields[YEAR] + 1;
+            fields[ERA] = BH;
+        } else {
+            fields[ERA] = AH;
         }
         int far1 = getFixedDateFar1(fields[YEAR], fields[ERA] == AH);
         int daysOfYear = fixedDate - far1 + 1;
@@ -320,14 +433,32 @@ public class PersianCalendar extends Calendar {
         if (fields[YEAR] == 0) {
             throw new IllegalArgumentException("Year cannot be zero");
         }
-        fields[YEAR] += Math.floor(fields[MONTH] / 12);
+        if (!isSet(ERA)) {
+            fields[ERA] = AH;
+        }
+        int extraYear = (int) Math.floor(fields[MONTH] / 12d);
+        if (extraYear != 0) {
+            if (fields[ERA] == AH ^ extraYear > 0) {
+                if (fields[ERA] == AH && fields[YEAR] <= Math.abs(extraYear)) {
+                    fields[YEAR] = Math.abs(extraYear) - fields[YEAR] + 1;
+                    set(ERA, BH);
+                } else if (fields[ERA] == BH && fields[YEAR] <= Math.abs(extraYear)) {
+                    fields[YEAR] = Math.abs(extraYear) - fields[YEAR] + 1;
+                    set(ERA, AH);
+                } else if (fields[ERA] == AH) {
+                    fields[YEAR] += extraYear; // the same as -= Math.abs(extraYear)
+                } else {
+                    fields[YEAR] -= extraYear; // the same as += Math.abs(extraYear)
+                }
+            } else {
+                fields[YEAR] += Math.abs(extraYear);
+            }
+        }
         fields[MONTH] %= 12; // months of a year is a fixed number (12)
         if (fields[MONTH] < 0) {
             fields[MONTH] += 12; // month range is 0-11
         }
-        if (!isSet(ERA)) {
-            set(ERA, AH);
-        }
+
         int fixedDate = getFixedDateFar1(fields[YEAR], fields[ERA] == AH) +
                 ACCUMULATED_DAYS_IN_MONTH[fields[MONTH]] +
                 (isSet(DAY_OF_MONTH) ? fields[DAY_OF_MONTH] - 1 : 0);
@@ -340,6 +471,9 @@ public class PersianCalendar extends Calendar {
                 (isSet(MINUTE) ? fields[MINUTE] : 0) * ONE_MINUTE_IN_MILLIS + timezoneOffset +
                 (isSet(SECOND) ? fields[SECOND] : 0) * ONE_SECOND_IN_MILLIS +
                 (isSet(MILLISECOND) ? fields[MILLISECOND] : 0);
+        areFieldsSet = false;
+    }
+
     }
 
     @Override
@@ -391,17 +525,31 @@ public class PersianCalendar extends Calendar {
     /* To find the year that associated with fixedDat. */
     private int getYearFromFixedDate(int fd) {
         int testYear;
-        if (fd > 0)
+        boolean testAfterH = fd > 0;
+        if (testAfterH) {
             testYear = (int) Math.floor(Math.round((fd - 1) / 365.24219)) + 1;
-        else
+        } else {
             testYear = (int) Math.floor(Math.round(fd / 365.24219));
-        //console.log("testYear: "+testYear);
-        int far1 = getFixedDateFar1(testYear, fd > 0);
-        //console.log("far1: "+far1);
+        }
+        if (testYear == 0) {
+            testYear = 1;
+            testAfterH = true;
+        }
+        int far1 = getFixedDateFar1(Math.abs(testYear), testAfterH);
         if (far1 <= fd)
-            return testYear;
-        else
-            return testYear - 1;
+            if (testYear <= 0) {
+                return testYear + 1;
+            } else {
+                return testYear;
+            }
+        else {
+            // last year of testYear and try to convert it to include zero
+            if (testYear <= -1) {
+                return testYear;
+            } else {
+                return testYear - 1;
+            }
+        }
     }
 
     /* To find the fixedDate of first day of year. Farvardin 1, 1 must have fixedDate of one. */
@@ -433,7 +581,7 @@ public class PersianCalendar extends Calendar {
         if (afterH && year == 1) {
             lastYear = 1;
             lastYearAfterH = false;
-        } else if(!afterH) {
+        } else if (!afterH) {
             lastYear = year + 1;
         }
         if (isLeapYear(lastYear, lastYearAfterH) && frac <= 202) {
@@ -442,11 +590,14 @@ public class PersianCalendar extends Calendar {
         return days;
     }
 
-    private int daysInMonth() {
+    public int daysInMonth() {
         return daysInMonth(isLeapYear(fields[YEAR], fields[ERA] == AH), fields[MONTH]);
     }
 
-    private int daysInMonth(boolean leapYear, int month) {
+    public static int daysInMonth(boolean leapYear, int month) {
+        if (month < 0 || month > ESFAND) {
+            throw new IllegalArgumentException();
+        }
         if (month == ESFAND) {
             if (leapYear) {
                 return 30;
