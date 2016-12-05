@@ -474,6 +474,32 @@ public class PersianCalendar extends Calendar {
         areFieldsSet = false;
     }
 
+
+    /**
+     * Compares the given object to this {@code Calendar} and returns whether they are
+     * equal. The object must be an instance of {@code Calendar} and have the same
+     * properties.
+     *
+     * @return {@code true} if the given object is equal to this {@code Calendar}, {@code false}
+     * otherwise.
+     */
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+        if (!(object instanceof Calendar)) {
+            return false;
+        }
+        Calendar cal = (Calendar) object;
+        return getTimeInMillis() == cal.getTimeInMillis()
+                && get(YEAR) == cal.get(YEAR)
+                && get(MONTH) == cal.get(MONTH)
+                && get(DAY_OF_MONTH) == cal.get(DAY_OF_MONTH)
+                && get(HOUR) == cal.get(HOUR)
+                && get(MINUTE) == cal.get(MINUTE)
+                && get(SECOND) == cal.get(SECOND)
+                && get(MILLISECOND) == cal.get(MILLISECOND);
     }
 
     @Override
