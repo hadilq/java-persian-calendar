@@ -463,8 +463,6 @@ public class PersianCalendar extends Calendar {
                 ACCUMULATED_DAYS_IN_MONTH[fields[MONTH]] +
                 (isSet(DAY_OF_MONTH) ? fields[DAY_OF_MONTH] - 1 : 0);
 
-        //console.log("year: "+Year);
-        //console.log("fixedDate: "+fixedDate);
         int timezoneOffset = -getOffset(fixedDate * ONE_DAY_IN_MILLIS);
         time = (fixedDate - EPOCH_OFFSET) * ONE_DAY_IN_MILLIS + ONE_HOUR_IN_MILLIS +
                 (isSet(HOUR_OF_DAY) ? fields[HOUR_OF_DAY] : (isSet(HOUR) && isSet(AM_PM) ? (fields[HOUR] + (fields[AM_PM] == AM ? 0 : 12)) : 0)) * ONE_HOUR_IN_MILLIS +
