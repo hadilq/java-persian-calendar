@@ -11,7 +11,7 @@ And if you want to more proof of correctness of this class you can see the tests
  
 However, this class is written in android project structure, you can simply use it in java projects.
 
-BTW, Currently add and roll methods of calendar are not supported, but soon I'll implement them.
+BTW, roll method of calendar is not supported, and I have no plan to support it.
 Also, The maximum and minimum of fields are not carefully determined yet, but as you can see in tests,
 from year 3000 before hijra to 3000 after hijra is a valid interval for this calendar.
 
@@ -39,4 +39,14 @@ PersianCalendar calendar = new PersianCalendar(1395, 7, 23, 10, 56, 52);
 long millis = calendar.getTimeInMillis()
 ```
 
+Also you can use add method like this
 
+```Java
+calendar.add(Calendar.DATE, 1);
+```
+
+Or this
+
+```Java
+calendar.add(Calendar.DATE, -1);
+```
