@@ -2,8 +2,6 @@
 
 The main class of this project that you can copy to your project
 freely is [PersianCalendar](https://github.com/hadilq/java-persian-calendar/blob/master/persian/src/main/java/ir/hadilq/PersianCalendar.java).
-There is some functiions in [CalendarsUtil](https://github.com/hadilq/java-persian-calendar/blob/master/persian/src/main/java/ir/hadilq/util/CalendarsUtil.java),
-which you can copy to the calendar class for your project.
 
 This calendar is unlimited as long as Kayyam rules and Java are correct.
 You can see important functions in [here](https://github.com/hadilq/persian-calendar-important-functions) and [here](https://en.wikibooks.org/wiki/Persian_Calendar).
