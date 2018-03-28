@@ -161,10 +161,10 @@ public class PersianCalendarUnitTest {
 
         for (int i = 1; i < 3000; i++) {
             if (PersianCalendar.isLeapYear(i, true)) {
-                calendar = new PersianCalendar(i, 11, 30);
+                calendar = new PersianCalendar(i, PersianCalendar.ESFAND, 30);
                 calendar.add(Calendar.DATE, 1);
             } else {
-                calendar = new PersianCalendar(i, 11, 29);
+                calendar = new PersianCalendar(i, PersianCalendar.ESFAND, 29);
                 calendar.add(Calendar.DATE, 1);
             }
             Assert.assertTrue(
@@ -173,11 +173,11 @@ public class PersianCalendarUnitTest {
 
         for (int i = 2; i < 3000; i++) {
             if (PersianCalendar.isLeapYear(i, false)) {
-                calendar = new PersianCalendar(i, 11, 30);
+                calendar = new PersianCalendar(i, PersianCalendar.ESFAND, 30);
                 calendar.set(Calendar.ERA, PersianCalendar.BH);
                 calendar.add(Calendar.DATE, 1);
             } else {
-                calendar = new PersianCalendar(i, 11, 29);
+                calendar = new PersianCalendar(i, PersianCalendar.ESFAND, 29);
                 calendar.set(Calendar.ERA, PersianCalendar.BH);
                 calendar.add(Calendar.DATE, 1);
             }
@@ -186,11 +186,11 @@ public class PersianCalendarUnitTest {
         }
 
         if (PersianCalendar.isLeapYear(1, false)) {
-            calendar = new PersianCalendar(1, 11, 30);
+            calendar = new PersianCalendar(1, PersianCalendar.ESFAND, 30);
             calendar.set(Calendar.ERA, PersianCalendar.BH);
             calendar.add(Calendar.DATE, 1);
         } else {
-            calendar = new PersianCalendar(1, 11, 29);
+            calendar = new PersianCalendar(1, PersianCalendar.ESFAND, 29);
             calendar.set(Calendar.ERA, PersianCalendar.BH);
             calendar.add(Calendar.DATE, 1);
         }
@@ -200,7 +200,7 @@ public class PersianCalendarUnitTest {
                 calendar.get(Calendar.ERA) == PersianCalendar.AH);
 
         for (int i = 2; i < 3000; i++) {
-            calendar = new PersianCalendar(i, 0, 1);
+            calendar = new PersianCalendar(i, PersianCalendar.FARVARDIN, 1);
             calendar.add(Calendar.DATE, -1);
 
             Assert.assertTrue(
@@ -219,7 +219,7 @@ public class PersianCalendarUnitTest {
         }
 
         for (int i = 1; i < 3000; i++) {
-            calendar = new PersianCalendar(i, 0, 1);
+            calendar = new PersianCalendar(i, PersianCalendar.FARVARDIN, 1);
             calendar.set(Calendar.ERA, PersianCalendar.BH);
             calendar.add(Calendar.DATE, -1);
 
@@ -238,7 +238,7 @@ public class PersianCalendarUnitTest {
             }
         }
 
-        calendar = new PersianCalendar(1, 0, 1);
+        calendar = new PersianCalendar(1, PersianCalendar.FARVARDIN, 1);
         calendar.add(Calendar.DATE, -1);
 
         Assert.assertTrue(
@@ -321,6 +321,55 @@ public class PersianCalendarUnitTest {
                                 expectedCalendar, calendar.get(Calendar.DAY_OF_MONTH) ==
                                 expectedCalendar.get(Calendar.DAY_OF_MONTH));
             }
+        }
+    }
+
+    @Test
+    public void dayOfWeek() {
+        PersianCalendar calendar =
+                new PersianCalendar(1397, PersianCalendar.FARVARDIN, 8, 20, 2, 52);
+        Assert.assertEquals("", PersianCalendar.WEDNESDAY, calendar.get(Calendar.DAY_OF_WEEK));
+        calendar = new PersianCalendar(1397, PersianCalendar.FARVARDIN, 9, 20, 2, 52);
+        Assert.assertEquals("", PersianCalendar.THURSDAY, calendar.get(Calendar.DAY_OF_WEEK));
+        calendar = new PersianCalendar(1397, PersianCalendar.FARVARDIN, 10, 18, 59, 52);
+        Assert.assertEquals("", PersianCalendar.FRIDAY, calendar.get(Calendar.DAY_OF_WEEK));
+        calendar = new PersianCalendar(1397, PersianCalendar.FARVARDIN, 11, 14, 46, 52);
+        Assert.assertEquals("", PersianCalendar.SATURDAY, calendar.get(Calendar.DAY_OF_WEEK));
+        calendar = new PersianCalendar(1397, PersianCalendar.FARVARDIN, 12, 11, 23, 52);
+        Assert.assertEquals("", PersianCalendar.SUNDAY, calendar.get(Calendar.DAY_OF_WEEK));
+        calendar = new PersianCalendar(1397, PersianCalendar.FARVARDIN, 13, 9, 15, 52);
+        Assert.assertEquals("", PersianCalendar.MONDAY, calendar.get(Calendar.DAY_OF_WEEK));
+        calendar = new PersianCalendar(1397, PersianCalendar.FARVARDIN, 14, 7, 5, 52);
+        Assert.assertEquals("", PersianCalendar.TUESDAY, calendar.get(Calendar.DAY_OF_WEEK));
+        calendar = new PersianCalendar(1397, PersianCalendar.FARVARDIN, 15, 2, 2, 52);
+        Assert.assertEquals("", PersianCalendar.WEDNESDAY, calendar.get(Calendar.DAY_OF_WEEK));
+    }
+
+
+    @Test
+    public void dayOfWeekForAll() {
+        PersianCalendar calendar = new PersianCalendar(1, PersianCalendar.FARVARDIN, 1, 1, 1, 1);
+        Assert.assertEquals(
+                "Week is not matching. First day after Hejra", PersianCalendar.FRIDAY,
+                calendar.get(Calendar.DAY_OF_WEEK));
+        for (int d = 1; calendar.get(Calendar.YEAR) < 3000; d++) {
+            Assert.assertEquals(
+                    "Week is not matching " + d, (d + 4) % 7 + 1,
+                    calendar.get(Calendar.DAY_OF_WEEK));
+            calendar.add(Calendar.DATE, 1);
+        }
+        calendar.set(Calendar.ERA, PersianCalendar.BH);
+        calendar.set(Calendar.YEAR, 1);
+        calendar.set(Calendar.MONTH, PersianCalendar.FARVARDIN);
+        calendar.set(Calendar.DATE, 1);
+        Assert.assertEquals(
+                "Week is not matching. First day before Hejra", PersianCalendar.THURSDAY,
+                calendar.get(Calendar.DAY_OF_WEEK));
+        for (int d = 1; calendar.get(Calendar.YEAR) < 3000; d++) {
+            Assert.assertEquals(
+                    "Week is not matching " + d, (-d - 1) % 7 + 7,
+                    calendar.get(Calendar.DAY_OF_WEEK));
+            calendar.add(Calendar.DATE, -1);
         }
     }
 }

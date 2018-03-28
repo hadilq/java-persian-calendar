@@ -435,6 +435,8 @@ public class PersianCalendar extends Calendar {
         fields[SECOND] = (int) Math.floor(extra * 1d / ONE_SECOND_IN_MILLIS);
         extra -= fields[SECOND] * ONE_SECOND_IN_MILLIS;
         fields[MILLISECOND] = (int) extra;
+
+        fields[DAY_OF_WEEK] = fixedDate >= 0 ? (fixedDate + 4) % 7 + 1 : (fixedDate - 1) % 7 + 7;
     }
 
     @Override
