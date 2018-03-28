@@ -1,7 +1,8 @@
 package ir.hadilq.test;
 
-import ir.hadilq.util.Cycle;
 import org.junit.Test;
+
+import ir.hadilq.util.Cycle;
 
 public class CycleUnitTest {
 

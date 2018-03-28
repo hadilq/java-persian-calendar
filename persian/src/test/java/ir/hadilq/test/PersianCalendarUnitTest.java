@@ -1,11 +1,13 @@
 package ir.hadilq.test;
 
-import ir.hadilq.PersianCalendar;
-import ir.hadilq.util.Cycle;
 import junit.framework.Assert;
+
 import org.junit.Test;
 
 import java.util.Calendar;
+
+import ir.hadilq.PersianCalendar;
+import ir.hadilq.util.Cycle;
 
 public class PersianCalendarUnitTest {
 
@@ -28,8 +30,10 @@ public class PersianCalendarUnitTest {
         boolean realLeap = Cycle.isLeap(bigCycle, year, afterH);
         boolean leap = PersianCalendar.isLeapYear(year, afterH);
         if (realLeap ^ leap) {
-            throw new Exception("This year is wrong: " + year + ", afterH: " + afterH + ", realLeap: " + realLeap +
-                    ", leap:" + leap);
+            throw new Exception(
+                    "This year is wrong: " + year + ", afterH: " + afterH + ", realLeap: " +
+                            realLeap +
+                            ", leap:" + leap);
         }
     }
 
@@ -95,7 +99,9 @@ public class PersianCalendarUnitTest {
                     ", days: " + days + ", fixedDateFar1: " + fixedDateFar1 +
                     " isLeap: " + PersianCalendar.isLeapYear(year, afterH) +
                     " next year isLeap: " + PersianCalendar.isLeapYear(year + 1, afterH) +
-                    (year > 1 ? " previous year isLeap: " + PersianCalendar.isLeapYear(year - 1, afterH) : ""));
+                    (
+                            year > 1 ? " previous year isLeap: " +
+                                    PersianCalendar.isLeapYear(year - 1, afterH) : ""));
             wrongTry++;
             if (wrongTry > 100) {
                 throw new Exception();
@@ -106,9 +112,12 @@ public class PersianCalendarUnitTest {
     @Test
     public void checkPersianCalendarIsRunning() throws Exception {
         PersianCalendar calendar = new PersianCalendar();
-        System.out.println("year: " + calendar.get(Calendar.YEAR) + ", month: " + calendar.get(Calendar.MONTH) +
-                ", day of month: " + calendar.get(Calendar.DAY_OF_MONTH) + ", hour: " + calendar.get(Calendar.HOUR_OF_DAY) +
-                ", minutes: " + calendar.get(Calendar.MINUTE) + ", seconds: " + calendar.get(Calendar.SECOND) +
+        System.out.println("year: " + calendar.get(Calendar.YEAR) + ", month: " +
+                calendar.get(Calendar.MONTH) +
+                ", day of month: " + calendar.get(Calendar.DAY_OF_MONTH) + ", hour: " +
+                calendar.get(Calendar.HOUR_OF_DAY) +
+                ", minutes: " + calendar.get(Calendar.MINUTE) + ", seconds: " +
+                calendar.get(Calendar.SECOND) +
                 ", millis: " + calendar.get(Calendar.MILLISECOND));
     }
 
@@ -116,13 +125,23 @@ public class PersianCalendarUnitTest {
     public void comparePersianCalendarTimeWithSample() throws Exception {
         PersianCalendar calendar = new PersianCalendar();
         calendar.setTimeInMillis(1479022012901L);
-        Assert.assertTrue("Year: " + calendar.get(Calendar.YEAR), calendar.get(Calendar.YEAR) == 1395);
-        Assert.assertTrue("Month: " + calendar.get(Calendar.MONTH), calendar.get(Calendar.MONTH) == 7);
-        Assert.assertTrue("Day of month: " + calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.DAY_OF_MONTH) == 23);
-        Assert.assertTrue("Hour: " + calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.HOUR_OF_DAY) == 10);
-        Assert.assertTrue("Minute: " + calendar.get(Calendar.MINUTE), calendar.get(Calendar.MINUTE) == 56);
-        Assert.assertTrue("Second: " + calendar.get(Calendar.SECOND), calendar.get(Calendar.SECOND) == 52);
-        Assert.assertTrue("Millis: " + calendar.get(Calendar.MILLISECOND), calendar.get(Calendar.MILLISECOND) == 901);
+        Assert.assertTrue(
+                "Year: " + calendar.get(Calendar.YEAR), calendar.get(Calendar.YEAR) == 1395);
+        Assert.assertTrue(
+                "Month: " + calendar.get(Calendar.MONTH), calendar.get(Calendar.MONTH) == 7);
+        Assert.assertTrue(
+                "Day of month: " + calendar.get(Calendar.DAY_OF_MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH) == 23);
+        Assert.assertTrue(
+                "Hour: " + calendar.get(Calendar.HOUR_OF_DAY),
+                calendar.get(Calendar.HOUR_OF_DAY) == 10);
+        Assert.assertTrue(
+                "Minute: " + calendar.get(Calendar.MINUTE), calendar.get(Calendar.MINUTE) == 56);
+        Assert.assertTrue(
+                "Second: " + calendar.get(Calendar.SECOND), calendar.get(Calendar.SECOND) == 52);
+        Assert.assertTrue(
+                "Millis: " + calendar.get(Calendar.MILLISECOND),
+                calendar.get(Calendar.MILLISECOND) == 901);
     }
 
     @Test
@@ -130,7 +149,8 @@ public class PersianCalendarUnitTest {
         PersianCalendar calendar = new PersianCalendar(1395, 7, 23, 10, 56, 52);
         long expected = 1479022012000L;
         long timeInMillis = calendar.getTimeInMillis();
-        Assert.assertTrue("Millis: " + timeInMillis + ", It should be: " + expected +
+        Assert.assertTrue(
+                "Millis: " + timeInMillis + ", It should be: " + expected +
                         ", diff is: " + (timeInMillis - expected),
                 timeInMillis == expected);
     }
@@ -147,7 +167,8 @@ public class PersianCalendarUnitTest {
                 calendar = new PersianCalendar(i, 11, 29);
                 calendar.add(Calendar.DATE, 1);
             }
-            Assert.assertTrue("Year: " + calendar.get(Calendar.YEAR), calendar.get(Calendar.YEAR) == i + 1);
+            Assert.assertTrue(
+                    "Year: " + calendar.get(Calendar.YEAR), calendar.get(Calendar.YEAR) == i + 1);
         }
 
         for (int i = 2; i < 3000; i++) {
@@ -160,7 +181,8 @@ public class PersianCalendarUnitTest {
                 calendar.set(Calendar.ERA, PersianCalendar.BH);
                 calendar.add(Calendar.DATE, 1);
             }
-            Assert.assertTrue("Year: " + calendar.get(Calendar.YEAR), calendar.get(Calendar.YEAR) == i - 1);
+            Assert.assertTrue(
+                    "Year: " + calendar.get(Calendar.YEAR), calendar.get(Calendar.YEAR) == i - 1);
         }
 
         if (PersianCalendar.isLeapYear(1, false)) {
@@ -173,18 +195,26 @@ public class PersianCalendarUnitTest {
             calendar.add(Calendar.DATE, 1);
         }
         Assert.assertTrue("Year: " + calendar.get(Calendar.YEAR), calendar.get(Calendar.YEAR) == 1);
-        Assert.assertTrue("Era: " + calendar.get(Calendar.ERA), calendar.get(Calendar.ERA) == PersianCalendar.AH);
+        Assert.assertTrue(
+                "Era: " + calendar.get(Calendar.ERA),
+                calendar.get(Calendar.ERA) == PersianCalendar.AH);
 
         for (int i = 2; i < 3000; i++) {
             calendar = new PersianCalendar(i, 0, 1);
             calendar.add(Calendar.DATE, -1);
 
-            Assert.assertTrue("Year: " + calendar.get(Calendar.YEAR), calendar.get(Calendar.YEAR) == i - 1);
-            Assert.assertTrue("Month: " + calendar.get(Calendar.MONTH), calendar.get(Calendar.MONTH) == 11);
+            Assert.assertTrue(
+                    "Year: " + calendar.get(Calendar.YEAR), calendar.get(Calendar.YEAR) == i - 1);
+            Assert.assertTrue(
+                    "Month: " + calendar.get(Calendar.MONTH), calendar.get(Calendar.MONTH) == 11);
             if (PersianCalendar.isLeapYear(i - 1, true)) {
-                Assert.assertTrue("Day: " + calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.DAY_OF_MONTH) == 30);
+                Assert.assertTrue(
+                        "Day: " + calendar.get(Calendar.DAY_OF_MONTH),
+                        calendar.get(Calendar.DAY_OF_MONTH) == 30);
             } else {
-                Assert.assertTrue("Day: " + calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.DAY_OF_MONTH) == 29);
+                Assert.assertTrue(
+                        "Day: " + calendar.get(Calendar.DAY_OF_MONTH),
+                        calendar.get(Calendar.DAY_OF_MONTH) == 29);
             }
         }
 
@@ -193,23 +223,34 @@ public class PersianCalendarUnitTest {
             calendar.set(Calendar.ERA, PersianCalendar.BH);
             calendar.add(Calendar.DATE, -1);
 
-            Assert.assertTrue("Year: " + calendar.get(Calendar.YEAR), calendar.get(Calendar.YEAR) == i + 1);
-            Assert.assertTrue("Month: " + calendar.get(Calendar.MONTH), calendar.get(Calendar.MONTH) == 11);
+            Assert.assertTrue(
+                    "Year: " + calendar.get(Calendar.YEAR), calendar.get(Calendar.YEAR) == i + 1);
+            Assert.assertTrue(
+                    "Month: " + calendar.get(Calendar.MONTH), calendar.get(Calendar.MONTH) == 11);
             if (PersianCalendar.isLeapYear(i + 1, false)) {
-                Assert.assertTrue("Day: " + calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.DAY_OF_MONTH) == 30);
+                Assert.assertTrue(
+                        "Day: " + calendar.get(Calendar.DAY_OF_MONTH),
+                        calendar.get(Calendar.DAY_OF_MONTH) == 30);
             } else {
-                Assert.assertTrue("Day: " + calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.DAY_OF_MONTH) == 29);
+                Assert.assertTrue(
+                        "Day: " + calendar.get(Calendar.DAY_OF_MONTH),
+                        calendar.get(Calendar.DAY_OF_MONTH) == 29);
             }
         }
 
         calendar = new PersianCalendar(1, 0, 1);
         calendar.add(Calendar.DATE, -1);
 
-        Assert.assertTrue("Era: " + calendar.get(Calendar.ERA), calendar.get(Calendar.ERA) == PersianCalendar.BH);
+        Assert.assertTrue(
+                "Era: " + calendar.get(Calendar.ERA),
+                calendar.get(Calendar.ERA) == PersianCalendar.BH);
         Assert.assertTrue("Year: " + calendar.get(Calendar.YEAR), calendar.get(Calendar.YEAR) == 1);
-        Assert.assertTrue("Month: " + calendar.get(Calendar.MONTH), calendar.get(Calendar.MONTH) == 11);
+        Assert.assertTrue(
+                "Month: " + calendar.get(Calendar.MONTH), calendar.get(Calendar.MONTH) == 11);
         // year 1 before Hijra is a leap year
-        Assert.assertTrue("Day: " + calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.DAY_OF_MONTH) == 30);
+        Assert.assertTrue(
+                "Day: " + calendar.get(Calendar.DAY_OF_MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH) == 30);
     }
 
     @Test
@@ -224,16 +265,26 @@ public class PersianCalendarUnitTest {
             boolean isLeap = PersianCalendar.isLeapYear(Math.abs(y), y > 0);
             for (int m = 0; m < 12; m++) {
 //                System.out.println("Year: " + y + ", Month: " + m);
-                calendar = new PersianCalendar(Math.abs(y), m, PersianCalendar.daysInMonth(isLeap, m));
+                calendar =
+                        new PersianCalendar(Math.abs(y), m, PersianCalendar.daysInMonth(isLeap, m));
                 calendar.set(Calendar.ERA, y > 0 ? PersianCalendar.AH : PersianCalendar.BH);
                 calendar.add(Calendar.DATE, 1);
                 expectedCalendar = new PersianCalendar(Math.abs(y), m + 1, 1);
                 expectedCalendar.set(Calendar.ERA, y > 0 ? PersianCalendar.AH : PersianCalendar.BH);
                 // To compute
                 expectedCalendar.get(Calendar.YEAR);
-                Assert.assertTrue("\n         Calendar: " + calendar + "\nExpected calendar: " + expectedCalendar, calendar.get(Calendar.YEAR) == expectedCalendar.get(Calendar.YEAR));
-                Assert.assertTrue("\n         Calendar: " + calendar + "\nExpected calendar: " + expectedCalendar, calendar.get(Calendar.MONTH) == expectedCalendar.get(Calendar.MONTH));
-                Assert.assertTrue("\n         Calendar: " + calendar + "\nExpected calendar: " + expectedCalendar, calendar.get(Calendar.DAY_OF_MONTH) == expectedCalendar.get(Calendar.DAY_OF_MONTH));
+                Assert.assertTrue(
+                        "\n         Calendar: " + calendar + "\nExpected calendar: " +
+                                expectedCalendar,
+                        calendar.get(Calendar.YEAR) == expectedCalendar.get(Calendar.YEAR));
+                Assert.assertTrue(
+                        "\n         Calendar: " + calendar + "\nExpected calendar: " +
+                                expectedCalendar,
+                        calendar.get(Calendar.MONTH) == expectedCalendar.get(Calendar.MONTH));
+                Assert.assertTrue(
+                        "\n         Calendar: " + calendar + "\nExpected calendar: " +
+                                expectedCalendar, calendar.get(Calendar.DAY_OF_MONTH) ==
+                                expectedCalendar.get(Calendar.DAY_OF_MONTH));
             }
         }
 
@@ -252,11 +303,23 @@ public class PersianCalendarUnitTest {
                 int year = expectedCalendar.get(Calendar.YEAR);
                 int month = expectedCalendar.get(Calendar.MONTH);
                 int era = expectedCalendar.get(Calendar.ERA);
-                expectedCalendar = new PersianCalendar(year, month, PersianCalendar.daysInMonth(PersianCalendar.isLeapYear(year, era == PersianCalendar.AH), month));
+                expectedCalendar = new PersianCalendar(year, month, PersianCalendar
+                        .daysInMonth(
+                                PersianCalendar.isLeapYear(year, era == PersianCalendar.AH),
+                                month));
                 expectedCalendar.set(Calendar.ERA, era);
-                Assert.assertTrue("\n         Calendar: " + calendar + "\nExpected calendar: " + expectedCalendar, calendar.get(Calendar.YEAR) == expectedCalendar.get(Calendar.YEAR));
-                Assert.assertTrue("\n         Calendar: " + calendar + "\nExpected calendar: " + expectedCalendar, calendar.get(Calendar.MONTH) == expectedCalendar.get(Calendar.MONTH));
-                Assert.assertTrue("\n         Calendar: " + calendar + "\nExpected calendar: " + expectedCalendar, calendar.get(Calendar.DAY_OF_MONTH) == expectedCalendar.get(Calendar.DAY_OF_MONTH));
+                Assert.assertTrue(
+                        "\n         Calendar: " + calendar + "\nExpected calendar: " +
+                                expectedCalendar,
+                        calendar.get(Calendar.YEAR) == expectedCalendar.get(Calendar.YEAR));
+                Assert.assertTrue(
+                        "\n         Calendar: " + calendar + "\nExpected calendar: " +
+                                expectedCalendar,
+                        calendar.get(Calendar.MONTH) == expectedCalendar.get(Calendar.MONTH));
+                Assert.assertTrue(
+                        "\n         Calendar: " + calendar + "\nExpected calendar: " +
+                                expectedCalendar, calendar.get(Calendar.DAY_OF_MONTH) ==
+                                expectedCalendar.get(Calendar.DAY_OF_MONTH));
             }
         }
     }

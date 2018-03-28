@@ -62,7 +62,8 @@ public class Cycle {
     public boolean isLeap(int realYearOffset) { // real year can be zero or negative
         if (includeCycles == null) {
             if (length != Length.Cycle4 && length != Length.Cycle5) {
-                throw new IllegalArgumentException("Other cycles cannot have includeCycles == null: " + this);
+                throw new IllegalArgumentException(
+                        "Other cycles cannot have includeCycles == null: " + this);
             }
 
             return realYearOffset == interval();

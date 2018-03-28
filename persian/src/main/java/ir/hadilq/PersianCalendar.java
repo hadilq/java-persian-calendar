@@ -1,13 +1,14 @@
 package ir.hadilq;
 
 import android.support.annotation.IntDef;
-import ir.hadilq.util.CalendarsUtil;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
+
+import ir.hadilq.util.CalendarsUtil;
 
 import static ir.hadilq.util.CalendarsUtil.getIntegerPart;
 
@@ -168,15 +169,19 @@ public class PersianCalendar extends Calendar {
             516818, // True   ,  1416
             517184, // False   ,  1417
     };
-    private final static int[] ACCUMULATED_DAYS_IN_MONTH = new int[]{0, 31, 62, 93, 124, 155,
+    private final static int[] ACCUMULATED_DAYS_IN_MONTH = new int[]{
+            0, 31, 62, 93, 124, 155,
             186, 216, 246, 276, 306, 336};
-    private final static int[] MINIMUMS = new int[]{0, 1, 0, 1, 0, 1, 1, 1, 1, 0,
+    private final static int[] MINIMUMS = new int[]{
+            0, 1, 0, 1, 0, 1, 1, 1, 1, 0,
             0, 0, 0, 0, 0, -13 * 3600 * 1000, 0};
 
-    private static int[] MAXIMUMS = new int[]{1, 292278994, 11, 53, 6, 31,
+    private static int[] MAXIMUMS = new int[]{
+            1, 292278994, 11, 53, 6, 31,
             366, 7, 6, 1, 11, 23, 59, 59, 999, 14 * 3600 * 1000, 7200000};
 
-    private static int[] LEAST_MAXIMUMS = new int[]{1, 292269054, 11, 50, 3,
+    private static int[] LEAST_MAXIMUMS = new int[]{
+            1, 292269054, 11, 50, 3,
             28, 355, 7, 3, 1, 11, 23, 59, 59, 999, 50400000, 1200000};
 
     private final static long ONE_SECOND_IN_MILLIS = 1000,
@@ -186,7 +191,12 @@ public class PersianCalendar extends Calendar {
     private int fixedDate = EPOCH_OFFSET;
 
 
-    @IntDef(value = {Calendar.ERA, Calendar.YEAR, Calendar.MONTH, Calendar.WEEK_OF_YEAR, Calendar.WEEK_OF_MONTH, Calendar.DATE, Calendar.DAY_OF_MONTH, Calendar.DAY_OF_YEAR, Calendar.DAY_OF_WEEK, Calendar.DAY_OF_WEEK_IN_MONTH, Calendar.AM_PM, Calendar.HOUR, Calendar.HOUR_OF_DAY, Calendar.MINUTE, Calendar.SECOND, Calendar.MILLISECOND, Calendar.ZONE_OFFSET, Calendar.DST_OFFSET})
+    @IntDef(value = {
+            Calendar.ERA, Calendar.YEAR, Calendar.MONTH, Calendar.WEEK_OF_YEAR,
+            Calendar.WEEK_OF_MONTH, Calendar.DAY_OF_MONTH, Calendar.DAY_OF_YEAR,
+            Calendar.DAY_OF_WEEK, Calendar.DAY_OF_WEEK_IN_MONTH, Calendar.AM_PM, Calendar.HOUR,
+            Calendar.HOUR_OF_DAY, Calendar.MINUTE, Calendar.SECOND, Calendar.MILLISECOND,
+            Calendar.ZONE_OFFSET, Calendar.DST_OFFSET})
     @Retention(RetentionPolicy.SOURCE)
     public @interface Fields {
     }
@@ -238,8 +248,9 @@ public class PersianCalendar extends Calendar {
      * @param minute the minute.
      * @param second the second.
      */
-    public PersianCalendar(int year, int month, int day, int hour,
-                           int minute, int second) {
+    public PersianCalendar(
+            int year, int month, int day, int hour,
+            int minute, int second) {
         super(TimeZone.getDefault(), Locale.getDefault());
         set(year, month, day, hour, minute, second);
     }
@@ -400,9 +411,11 @@ public class PersianCalendar extends Calendar {
         int far1 = getFixedDateFar1(fields[YEAR], fields[ERA] == AH);
         fields[DAY_OF_YEAR] = fixedDate - far1 + 1;
         if (fields[DAY_OF_YEAR] < ACCUMULATED_DAYS_IN_MONTH[6]) {
-            fields[MONTH] = (int) Math.floor((fields[DAY_OF_YEAR] - 1) / 31d); // month range is 0-11
+            fields[MONTH] =
+                    (int) Math.floor((fields[DAY_OF_YEAR] - 1) / 31d); // month range is 0-11
         } else {
-            fields[MONTH] = (int) Math.floor((fields[DAY_OF_YEAR] - 1 - ACCUMULATED_DAYS_IN_MONTH[6]) / 30d) + 6;
+            fields[MONTH] = (int) Math
+                    .floor((fields[DAY_OF_YEAR] - 1 - ACCUMULATED_DAYS_IN_MONTH[6]) / 30d) + 6;
         }
         fields[DAY_OF_MONTH] = fields[DAY_OF_YEAR] - ACCUMULATED_DAYS_IN_MONTH[fields[MONTH]];
 
@@ -465,7 +478,11 @@ public class PersianCalendar extends Calendar {
 
         int timezoneOffset = -getOffset(fixedDate * ONE_DAY_IN_MILLIS);
         time = (fixedDate - EPOCH_OFFSET) * ONE_DAY_IN_MILLIS + ONE_HOUR_IN_MILLIS +
-                (isSet(HOUR_OF_DAY) ? fields[HOUR_OF_DAY] : (isSet(HOUR) && isSet(AM_PM) ? (fields[HOUR] + (fields[AM_PM] == AM ? 0 : 12)) : 0)) * ONE_HOUR_IN_MILLIS +
+                (
+                        isSet(HOUR_OF_DAY) ? fields[HOUR_OF_DAY] : (
+                                isSet(HOUR) && isSet(AM_PM) ?
+                                        (fields[HOUR] + (fields[AM_PM] == AM ? 0 : 12)) : 0)) *
+                        ONE_HOUR_IN_MILLIS +
                 (isSet(MINUTE) ? fields[MINUTE] : 0) * ONE_MINUTE_IN_MILLIS + timezoneOffset +
                 (isSet(SECOND) ? fields[SECOND] : 0) * ONE_SECOND_IN_MILLIS +
                 (isSet(MILLISECOND) ? fields[MILLISECOND] : 0);
@@ -560,13 +577,13 @@ public class PersianCalendar extends Calendar {
             testAfterH = true;
         }
         int far1 = getFixedDateFar1(Math.abs(testYear), testAfterH);
-        if (far1 <= fd)
+        if (far1 <= fd) {
             if (testYear <= 0) {
                 return testYear + 1;
             } else {
                 return testYear;
             }
-        else {
+        } else {
             // last year of testYear and try to convert it to include zero
             if (testYear <= -1) {
                 return testYear;
@@ -586,14 +603,17 @@ public class PersianCalendar extends Calendar {
         }
         // The detail can be found in en.wikibook.com
         int realYear;
-        if (afterH)
+        if (afterH) {
             realYear = year - 1;
-        else
+        } else {
             realYear = -year;
+        }
 
         int days = 1029983 * ((int) Math.floor((realYear + 38) / 2820d));
         int cycle = (realYear + 38) % 2820;
-        if (cycle < 0) cycle += 2820;
+        if (cycle < 0) {
+            cycle += 2820;
+        }
 
         days += Math.floor((cycle - 38) * 365.24219) + 1;
 
@@ -668,9 +688,10 @@ public class PersianCalendar extends Calendar {
         double frac0 = getIntegerPart((leapDays0 - getIntegerPart(leapDays0)) * 1000);
         double frac1 = getIntegerPart((leapDays1 - getIntegerPart(leapDays1)) * 1000);
         int criticalPoint = 266;
-        if (frac0 <= criticalPoint && frac1 > criticalPoint)
+        if (frac0 <= criticalPoint && frac1 > criticalPoint) {
             return true;
-        else
+        } else {
             return false;
+        }
     }
 }
