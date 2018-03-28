@@ -8,10 +8,6 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import ir.hadilq.util.CalendarsUtil;
-
-import static ir.hadilq.util.CalendarsUtil.getIntegerPart;
-
 public class PersianCalendar extends Calendar {
 
     /**
@@ -676,11 +672,11 @@ public class PersianCalendar extends Calendar {
         // The detail can be found in en.wikibook.com
         double realYear0, realYear1;
         if (afterH) {
-            realYear0 = CalendarsUtil.realYear(year, true);
-            realYear1 = CalendarsUtil.realYear(year + 1, true);
+            realYear0 = realYear(year, true);
+            realYear1 = realYear(year + 1, true);
         } else {
-            realYear0 = CalendarsUtil.realYear(year, false);
-            realYear1 = CalendarsUtil.realYear(year - 1, false);
+            realYear0 = realYear(year, false);
+            realYear1 = realYear(year - 1, false);
         }
 
         double extraDaysOfOneYear = 0.24219d; // 0.24219 ~ extra days of one year
@@ -694,6 +690,32 @@ public class PersianCalendar extends Calendar {
             return true;
         } else {
             return false;
+        }
+    }
+
+    public static int realYear(int year, boolean afterH) {
+        if (afterH) {
+            return mod(year + 38, 2820);
+        } else {
+            return mod(-year + 39, 2820);
+        }
+    }
+
+    private static int mod(int i, int j) {
+        int m = i % j;
+        if (m < 0) {
+            return m + j;
+        } else {
+            return m;
+        }
+    }
+
+    /* To get integer part of a float */
+    private static int getIntegerPart(double d) {
+        if (d >= 0) {
+            return (int) Math.floor(d);
+        } else {
+            return (int) Math.floor(d) + 1;
         }
     }
 }

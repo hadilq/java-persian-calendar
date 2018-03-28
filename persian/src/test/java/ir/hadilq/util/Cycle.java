@@ -6,6 +6,8 @@ import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Collection;
 
+import ir.hadilq.PersianCalendar;
+
 public class Cycle {
     private final Length length;
 
@@ -84,7 +86,7 @@ public class Cycle {
 
     public static boolean isLeap(Cycle cycle, int year, boolean afterH) {
         Assert.assertTrue("Year cannot be negative. Year: " + year, year > 0);
-        return cycle.isLeap(CalendarsUtil.realYear(year, afterH));
+        return cycle.isLeap(PersianCalendar.realYear(year, afterH));
     }
 
     private int interval() {
