@@ -16,7 +16,7 @@ from year 3000 before hijra to 3000 after hijra is a valid interval for this cal
 ## Add to dependencies
 
 This single class library is added to [jcenter](https://bintray.com/hadilq/Asparsa/Persian-Calendar),
-so you can use add them to your Android project as following. Before gradle `3.0`
+so you can add it to your Android project as the following. Before gradle `3.0`
 
 ```Gradle
 dependencies {
