@@ -20,7 +20,7 @@ so you can use add them to your Android project as following. Before gradle `3.0
 
 ```Gradle
 dependencies {
-    compile 'ir.hadilq:Persian-Calendar:1.1'
+    compile 'ir.hadilq:Persian-Calendar:1.1.3'
 }
 ```
 
@@ -28,7 +28,7 @@ After gradle `3.0`
 
 ```Gradle
 dependencies {
-    implementation 'ir.hadilq:Persian-Calendar:1.1'
+    implementation 'ir.hadilq:Persian-Calendar:1.1.3'
 }
 ```
 
