@@ -2,8 +2,8 @@
 
 buildscript {
     ext{
-        calendarVersionCode = 2
-        calendarVersionName = '1.1'
+        calendarVersionCode = 4
+        calendarVersionName = '1.1.2'
         artifactWebsiteUrl = 'https://github.com/hadilq/java-persian-calendar'
         artifactIssueTrackerUrl = 'https://github.com/hadilq/java-persian-calendar/issues'
         artifactGitUrl = 'https://github.com/hadilq/java-persian-calendar.git'

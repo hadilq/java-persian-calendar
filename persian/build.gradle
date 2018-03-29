@@ -22,6 +22,7 @@ android {
 
 group = artifactGroupId
 version = calendarVersionName
+project.archivesBaseName = artifactId
 
 install {
     repositories.mavenInstaller {
