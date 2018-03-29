@@ -1,5 +1,6 @@
 package ir.hadilq;
 
+import android.annotation.SuppressLint;
 import android.support.annotation.IntDef;
 
 import java.lang.annotation.Retention;
@@ -283,6 +284,7 @@ public class PersianCalendar extends Calendar {
         setTimeInMillis(System.currentTimeMillis());
     }
 
+    @SuppressLint("SwitchIntDef")
     @Override
     public void add(@Fields int field, int value) {
         if (value == 0) {
@@ -349,7 +351,7 @@ public class PersianCalendar extends Calendar {
             case AM_PM:
                 multiplier = 43200000L;
                 break;
-            case DATE:
+            case DAY_OF_MONTH:
             case DAY_OF_YEAR:
             case DAY_OF_WEEK:
                 multiplier = 86400000L;
