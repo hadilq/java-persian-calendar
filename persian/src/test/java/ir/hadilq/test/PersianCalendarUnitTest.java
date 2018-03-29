@@ -5,6 +5,7 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 import java.util.Calendar;
+import java.util.TimeZone;
 
 import ir.hadilq.PersianCalendar;
 import ir.hadilq.util.Cycle;
@@ -125,6 +126,7 @@ public class PersianCalendarUnitTest {
     public void comparePersianCalendarTimeWithSample() throws Exception {
         PersianCalendar calendar = new PersianCalendar();
         calendar.setTimeInMillis(1479022012901L);
+        calendar.setTimeZone(TimeZone.getTimeZone("Asia/Tehran"));
         Assert.assertTrue(
                 "Year: " + calendar.get(Calendar.YEAR), calendar.get(Calendar.YEAR) == 1395);
         Assert.assertTrue(
@@ -147,6 +149,7 @@ public class PersianCalendarUnitTest {
     @Test
     public void comparePersianCalendarFieldsWithSample() throws Exception {
         PersianCalendar calendar = new PersianCalendar(1395, 7, 23, 10, 56, 52);
+        calendar.setTimeZone(TimeZone.getTimeZone("Asia/Tehran"));
         long expected = 1479022012000L;
         long timeInMillis = calendar.getTimeInMillis();
         Assert.assertTrue(
