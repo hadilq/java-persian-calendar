@@ -1,3 +1,6 @@
+[![Download](https://api.bintray.com/packages/hadilq/Asparsa/Persian-Calendar/images/download.svg)](https://bintray.com/hadilq/Asparsa/Persian-Calendar/_latestVersion)
+[![Build Status](https://travis-ci.org/hadilq/java-persian-calendar.svg?branch=master)](https://travis-ci.org/hadilq/java-persian-calendar)
+
 # Java Persian Calendar
 
 The main class of this project that you can copy to your project

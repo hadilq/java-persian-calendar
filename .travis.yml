@@ -1,0 +1,8 @@
+language: android
+android:
+  components:
+    - build-tools-27.0.3
+    - android-27
+    - sys-img-armeabi-v7a-android-27
+    - sys-img-armeabi-v7a-android-17
+    - sys-img-armeabi-v7a-android-14
