@@ -1,4 +1,6 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
 
 android {
     compileSdkVersion 27
@@ -7,8 +9,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 27
-        versionCode 2
-        versionName "1.1"
+        versionCode calendarVersionCode
+        versionName calendarVersionName
     }
     buildTypes {
         release {
@@ -18,7 +20,87 @@ android {
     }
 }
 
+group = artifactGroupId
+version = calendarVersionName
+
+install {
+    repositories.mavenInstaller {
+        pom.project {
+            packaging 'aar'
+            groupId artifactGroupId
+            artifactId artifactId
+            version calendarVersionName
+            name artifactId
+            url artifactWebsiteUrl
+            inceptionYear '2018'
+            scm {
+                connection artifactGitUrl
+                developerConnection artifactGitUrl
+                url artifactWebsiteUrl
+            }
+        }
+    }
+}
+
+def propertiesFile = rootProject.file('bintray.properties')
+if (!propertiesFile.exists()) {
+    propertiesFile.write '\n'
+}
+def properties = new Properties()
+properties.load(new FileInputStream(propertiesFile))
+
+bintray {
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.apikey")
+
+    configurations = ['archives']
+    pkg {
+        repo = "Asparsa"
+        name = artifactId
+        websiteUrl = artifactWebsiteUrl
+        issueTrackerUrl = artifactIssueTrackerUrl
+        vcsUrl = artifactGitUrl
+        licenses = ['MIT']
+        publish = true
+        version {
+            name = calendarVersionName
+        }
+    }
+}
+
+configurations {
+    javadocImplementation
+}
+
 dependencies {
     implementation 'com.android.support:support-annotations:27.1.0'
+    javadocImplementation 'com.android.support:support-annotations:27.1.0'
     testImplementation 'junit:junit:4.12'
+}
+
+// Create the .jar file in /persian/build/libs/
+task jar(type: Jar) {
+    from 'build/intermediates/classes/release/'
+    archiveName 'Persian-Calendar.jar'
+}
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator)) + configurations.javadocImplementation
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+    // options.encoding = 'UTF-8'
+}
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
 }

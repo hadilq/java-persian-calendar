@@ -656,7 +656,7 @@ public class PersianCalendar extends Calendar {
     }
 
     /**
-     * Returns true if {@code year} is a leap year.
+     * @return Returns true if {@code year} is a leap year.
      */
     public boolean isLeapYear() {
         if (isSet(YEAR)) {
@@ -666,7 +666,9 @@ public class PersianCalendar extends Calendar {
     }
 
     /**
-     * Returns true if {@code year} is a leap year.
+     * @param year   a year in persian calendar
+     * @param afterH is after Hijra
+     * @return Returns true if {@code year} is a leap year.
      */
     public static boolean isLeapYear(int year, boolean afterH) {
         // The detail can be found in en.wikibook.com

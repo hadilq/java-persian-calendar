@@ -13,6 +13,24 @@ BTW, roll method of calendar is not supported, and I have no plan to support it.
 Also, The maximum and minimum of fields are not carefully determined yet, but as you can see in tests,
 from year 3000 before hijra to 3000 after hijra is a valid interval for this calendar.
 
+## Add to dependencies
+
+This single class library is added to [jcenter](https://bintray.com/hadilq/Asparsa/Persian-Calendar),
+so you can use add them to your Android project as following. Before gradle `3.0`
+
+```Gradle
+dependencies {
+    compile 'ir.hadilq:Persian-Calendar:1.1'
+}
+```
+
+After gradle `3.0`
+
+```Gradle
+dependencies {
+    implementation 'ir.hadilq:Persian-Calendar:1.1'
+}
+```
 
 ## Usage
 
